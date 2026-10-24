@@ -1,0 +1,109 @@
+Films: 68 | years 1998-2024
+Missing values per column (non-zero only):
+mcu_phase    35
+
+Q1: LEGS MULTIPLIER (worldwide / opening weekend) BY SEASON
+                count  median  mean
+release_season                     
+Fall                9    5.73  6.56
+Spring             27    6.84  6.34
+Summer             21    6.53  7.12
+Winter             11    5.90  5.63
+Kruskal-Wallis p = 0.303
+May median 6.43 (n=19) vs other months 6.45 (n=49), Mann-Whitney p = 0.946
+
+Median worldwide gross (inflation-adjusted, $M) by season:
+release_season
+Fall      823.0
+Spring    914.0
+Summer    539.0
+Winter    319.0
+
+Median worldwide gross (inflation-adjusted, $M) by release month (n in brackets):
+                   count  median
+release_month_num               
+1                      1    93.0
+2                      7   351.0
+3                      3   721.0
+4                      5   921.0
+5                     19   914.0
+6                      6   435.0
+7                     11   648.0
+8                      4   252.0
+9                      1   438.0
+10                     2   749.0
+11                     6   829.0
+12                     3   222.0
+
+Sequel flag (0 = first in franchise, 1 = later entry): median worldwide gross, inflation-adjusted, $M
+             count  median
+sequel_flag               
+0               10   488.0
+1               58   750.0
+
+Q2: OLS ln(worldwide gross, inflation-adj) ~ ln(budget adj) + Tomatometer + runtime + May-July release + studio group (ref: Marvel Studios)
+n=68 R2=0.759 adj R2=0.731 F p=0.0000
+                                                                   coef      p  ci_low  ci_high
+Intercept                                                         2.429  0.498  -4.704    9.562
+C(studio_group, Treatment("Marvel Studios"))[T.20th Century Fox]  0.110  0.522  -0.231    0.450
+C(studio_group, Treatment("Marvel Studios"))[T.Other]            -0.384  0.153  -0.915    0.146
+C(studio_group, Treatment("Marvel Studios"))[T.Sony Pictures]     0.393  0.046   0.007    0.780
+ln_bud                                                            0.835  0.000   0.431    1.240
+tomato                                                            0.017  0.000   0.010    0.023
+runtime                                                           0.006  0.225  -0.004    0.016
+summer_may                                                       -0.066  0.646  -0.350    0.219
+
+Plain-language effects: +10 Tomatometer points = 18.3% higher gross; +10% budget = 8.3% higher gross; Sony vs Marvel Studios = 48% (CI 1% to 118%)
+
+VIF:
+C(studio_group, Treatment("Marvel Studios"))[T.20th Century Fox]    1.7
+C(studio_group, Treatment("Marvel Studios"))[T.Other]               1.7
+C(studio_group, Treatment("Marvel Studios"))[T.Sony Pictures]       1.5
+ln_bud                                                              2.6
+tomato                                                              2.1
+runtime                                                             2.1
+summer_may                                                          1.5
+
+Robust (HC3) p-values:
+Intercept                                                           0.626
+C(studio_group, Treatment("Marvel Studios"))[T.20th Century Fox]    0.531
+C(studio_group, Treatment("Marvel Studios"))[T.Other]               0.234
+C(studio_group, Treatment("Marvel Studios"))[T.Sony Pictures]       0.034
+ln_bud                                                              0.004
+tomato                                                              0.000
+runtime                                                             0.263
+summer_may                                                          0.659
+
+Most influential films (Cook's distance; rule-of-thumb cutoff 4/n = 0.059):
+            title     studio_group  cooks  stud_resid
+Punisher: Warzone            Other  0.377      -3.747
+      The Marvels   Marvel Studios  0.191      -2.926
+         Deadpool 20th Century Fox  0.174       2.352
+  The New Mutants 20th Century Fox  0.102      -2.595
+            Venom    Sony Pictures  0.088       2.492
+
+Sensitivity: dropping the 6 most influential films -> Sony coef 0.155, p = 0.261; R2 0.833
+
+Q3: STUDIO COMPARISON (inflation-adjusted)
+                  films  median_ww_M  median_roi  median_tomato
+studio_group                                                   
+20th Century Fox     18          543        2.77           52.0
+Marvel Studios       33          858        4.20           83.0
+Other                 6          251        1.90           43.0
+Sony Pictures        11          914        3.47           51.0
+
+Sony Pictures titles:
+                           title  release_year  worldwide_gross_adj  roi_multiple  tomatometer
+                           Venom          2018                990.0          7.38           30
+                      Spider-Man          2002               1489.0          5.91           90
+     Venom: Let There Be Carnage          2021                508.0          4.56           57
+                    Spider-Man 2          2004               1348.0          3.97           93
+        The Amazing Spider-Man 2          2014                914.0          3.54           51
+                    Spider-Man 3          2007               1370.0          3.47           63
+          The Amazing Spider-Man          2012               1003.0          3.44           71
+Ghost Rider: Spirit of Vengeance          2012                197.0          2.62           19
+                         Morbius          2022                163.0          2.17           15
+                     Ghost Rider          2007                351.0          1.91           27
+                      Madame Web          2024                 98.0          1.22           12
+
+Sony films: Spearman corr (Tomatometer vs ROI) = 0.65, p = 0.029 (n=11)
